@@ -1,0 +1,268 @@
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;700&display=swap');
+
+/* ===== 畳テクスチャ背景 ===== */
+body {
+  font-family: 'Noto Serif JP', serif;
+  min-height: 100vh;
+  padding: 2rem;
+
+  /* 畳の基本色：深みある緑 */
+  background-color: #4a6741;
+
+  /* 畳の目：縦横の編み目パターン */
+  background-image:
+    /* 横糸 */
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 7px,
+      rgba(0,0,0,0.07) 7px,
+      rgba(0,0,0,0.07) 8px
+    ),
+    /* 縦糸 */
+    repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 7px,
+      rgba(0,0,0,0.07) 7px,
+      rgba(0,0,0,0.07) 8px
+    ),
+    /* 畳の縁（ブロック分割）*/
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 79px,
+      rgba(20,40,10,0.18) 79px,
+      rgba(20,40,10,0.18) 82px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 119px,
+      rgba(20,40,10,0.18) 119px,
+      rgba(20,40,10,0.18) 122px
+    ),
+    /* 光の当たり感：斜めのグラデ */
+    linear-gradient(
+      135deg,
+      rgba(255,255,255,0.06) 0%,
+      transparent 50%,
+      rgba(0,0,0,0.06) 100%
+    );
+}
+
+/* ===== ページ枠（畳の上に置いた文書箱） ===== */
+.page-wrapper {
+  max-width: 900px;
+  margin: 0 auto;
+  background: #f0e8d5;
+  border-radius: 2px;
+  padding: 2rem 2.5rem 3rem;
+  min-height: 95vh;
+  position: relative;
+  /* 畳の上に置いた厚みのある影 */
+  box-shadow:
+    2px 3px 0px #8a7a50,
+    4px 6px 0px #b0a070,
+    0 12px 40px rgba(20,30,10,0.35),
+    0 2px 8px rgba(0,0,0,0.2);
+}
+
+/* 和紙の染み */
+.page-wrapper::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 2px;
+  pointer-events: none;
+  background-image:
+    radial-gradient(ellipse 120px 60px at 12% 8%,  rgba(80,50,10,0.07)  0%, transparent 70%),
+    radial-gradient(ellipse  60px 90px at 88% 15%, rgba(60,40, 5,0.06)  0%, transparent 70%),
+    radial-gradient(ellipse 200px 40px at 50% 95%, rgba(100,70,20,0.05) 0%, transparent 70%),
+    radial-gradient(ellipse  80px 80px at  5% 60%, rgba(70,50,10,0.04)  0%, transparent 70%),
+    radial-gradient(ellipse  50px 50px at 75% 80%, rgba(40,20, 0,0.06)  0%, transparent 70%);
+  z-index: 0;
+}
+
+.page-wrapper::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 2px;
+  pointer-events: none;
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
+  z-index: 0;
+}
+
+/* ===== ヘッダータイトル（歌かるた風） ===== */
+.page-title-wrap {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 2.5rem;
+  position: relative;
+  z-index: 1;
+}
+
+.page-title {
+  /* 深緑地に金文字 */
+  background: #1e3d1a;
+  color: #e8c84a;
+  font-size: 1rem;
+  font-weight: 700;
+  padding: 0.85rem 3.5rem;
+  border-radius: 4px;
+  letter-spacing: 0.2em;
+  position: relative;
+  border: 1px solid #c8a830;
+  box-shadow:
+    inset 0 0 0 1px rgba(232,200,74,0.15),
+    inset 0 1px 0   rgba(255,255,255,0.08),
+    2px 3px 10px rgba(10,20,5,0.45);
+  text-shadow:
+    0 0 12px rgba(232,200,74,0.5),
+    1px 1px 2px rgba(0,0,0,0.5);
+  /* 金の細縁 */
+  outline: 2px solid rgba(200,168,48,0.3);
+  outline-offset: 3px;
+}
+
+/* ===== インクSVGフィルター定義 ===== */
+.ink-filters {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}
+
+/* ===== カードグリッド ===== */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0.55rem;
+  position: relative;
+  z-index: 1;
+}
+
+/* ===== カード（百人一首・読み札風） ===== */
+.card {
+  /* 深緑の地色 */
+  background: #1e3d1a;
+  border-radius: 5px;
+  overflow: hidden;
+  text-decoration: none;
+  color: #e8c84a;
+  display: flex;
+  flex-direction: column;
+  aspect-ratio: 3 / 4;
+  transition: transform 0.15s, box-shadow 0.2s;
+  position: relative;
+  border: 1px solid #c8a830;
+  box-shadow:
+    inset 0 1px 0 rgba(232,200,74,0.12),
+    inset 0 -1px 0 rgba(0,0,0,0.3),
+    1px 2px 6px rgba(10,20,5,0.4),
+    0 0 0 1px rgba(200,168,48,0.15);
+}
+
+/* 色ムラ（nth-child） */
+.card:nth-child(3n)   { background: #1a3817; }
+.card:nth-child(5n)   { background: #224420; }
+.card:nth-child(7n+1) { background: #183515; }
+
+/* 朱の角印（百人一首の印象） */
+.card::before {
+  content: '';
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  width: 10px;
+  height: 10px;
+  border: 1px solid #c0392b;
+  border-radius: 1px;
+  opacity: 0.6;
+  z-index: 3;
+}
+
+/* 内側の光沢・染み */
+.card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: 5px;
+  background:
+    radial-gradient(ellipse 70% 35% at 25% 12%, rgba(232,200,74,0.07) 0%, transparent 100%),
+    radial-gradient(ellipse 50% 50% at 80% 85%, rgba(0,0,0,0.15)      0%, transparent 100%);
+  z-index: 1;
+}
+
+.card:hover {
+  transform: translateY(-3px) rotate(-0.4deg);
+  box-shadow:
+    inset 0 1px 0 rgba(232,200,74,0.18),
+    2px 8px 20px rgba(10,20,5,0.5),
+    0 0 0 1px rgba(200,168,48,0.4);
+  border-color: #e8c84a;
+}
+
+/* ===== 画像エリア ===== */
+.card-image {
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 0;
+}
+
+.card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  filter: sepia(0.2) contrast(1.05) brightness(0.95);
+}
+
+/* 画像なし */
+.card-image.no-image {
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.card-image.no-image .no-image-label {
+  writing-mode: vertical-rl;
+  font-size: 0.58rem;
+  color: rgba(232,200,74,0.2);
+  letter-spacing: 0.12em;
+  font-family: 'Noto Serif JP', serif;
+}
+
+/* ===== カード下部テキスト（金文字） ===== */
+.card-info {
+  padding: 0.3rem 0.3rem 0.35rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.1rem;
+  background: rgba(0,0,0,0.35);
+  border-top: 1px solid rgba(200,168,48,0.3);
+  flex-shrink: 0;
+  position: relative;
+  z-index: 2;
+}
+
+.card-name {
+  writing-mode: vertical-rl;
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: #e8c84a;
+  letter-spacing: 0.08em;
+  font-family: 'Noto Serif JP', serif;
+  text-shadow:
+    0 0 6px rgba(232,200,74,0.4),
+    0 1px 3px rgba(0,0,0,0.6);
+}

@@ -1,0 +1,384 @@
+/* =============================================
+   card.css
+   テーマ：百人一首 × 畳の間
+   ============================================= */
+
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;700&family=Noto+Sans+JP:wght@400;500&display=swap');
+
+/* --- トークン --- */
+:root {
+  --bg:          #98b616;      /* 畳・緑 */
+  --bg-tatami:   #78c60b;
+  --surface:     #f8f3e8;      /* 和紙 */
+  --ink:         #1a1209;      /* 墨 */
+  --ink-light:   #5a4e3a;      /* 薄墨 */
+  --accent:      #c0392b;      /* 朱 */
+  --accent-gold: #c8a830;      /* 金 */
+  --accent-sub:  #e8c84a;      /* 薄金 */
+  --deep-green:  #1e3d1a;      /* 深緑（かるた地） */
+  --border:      #c8a830;      /* 金縁 */
+  --border-soft: #d4c4a0;      /* 和紙の縁 */
+  --shadow:      rgba(10,20,5,0.25);
+
+  --font-display: 'Noto Serif JP', serif;
+  --font-body:    'Noto Sans JP', sans-serif;
+
+  --radius: 4px;
+  --transition: 0.2s ease;
+}
+
+/* --- リセット --- */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* --- body：畳の間 --- */
+body {
+  /* 畳の編み目 */
+  background-color: var(--bg-tatami);
+  background-image:
+    repeating-linear-gradient(
+      0deg,
+      transparent, transparent 7px,
+      rgba(0,0,0,0.07) 7px, rgba(0,0,0,0.07) 8px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      transparent, transparent 7px,
+      rgba(0,0,0,0.07) 7px, rgba(0,0,0,0.07) 8px
+    ),
+    repeating-linear-gradient(
+      0deg,
+      transparent, transparent 79px,
+      rgba(20,40,10,0.18) 79px, rgba(20,40,10,0.18) 82px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      transparent, transparent 119px,
+      rgba(20,40,10,0.18) 119px, rgba(20,40,10,0.18) 122px
+    ),
+    linear-gradient(135deg,
+      rgba(255,255,255,0.06) 0%,
+      transparent 50%,
+      rgba(0,0,0,0.06) 100%
+    );
+  color: var(--ink);
+  font-family: var(--font-body);
+  min-height: 100vh;
+}
+
+/* --- ユーティリティ --- */
+.hidden { display: none !important; }
+
+/* --- ローディング --- */
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
+.loading-text {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  color: rgba(232,200,74,0.85);
+  letter-spacing: 0.25em;
+  animation: pulse 1.4s ease-in-out infinite;
+  text-shadow: 0 0 12px rgba(200,168,48,0.5);
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.3; }
+}
+
+/* --- エラー --- */
+.error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  height: 100vh;
+  font-family: var(--font-display);
+  color: var(--accent-sub);
+}
+
+/* --- ナビ（上部）--- */
+.nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 2rem;
+  background: var(--deep-green);
+  border-bottom: 2px solid var(--border);
+  box-shadow: 0 2px 8px rgba(10,20,5,0.3);
+}
+
+.card-id {
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  color: rgba(232,200,74,0.7);
+  letter-spacing: 0.2em;
+}
+
+.back-link {
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  color: rgba(232,200,74,0.8);
+  text-decoration: none;
+  letter-spacing: 0.08em;
+  transition: color var(--transition);
+}
+.back-link:hover { color: var(--accent-sub); }
+
+/* --- カードページ全体 --- */
+.card-page {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 4rem;
+}
+
+/* --- カード詳細レイアウト --- */
+.card-detail {
+  display: grid;
+  grid-template-columns: 340px 1fr;
+  gap: 3rem;
+  margin-top: 2.5rem;
+  align-items: start;
+}
+
+/* --- 画像エリア（百人一首・読み札風） --- */
+.image-frame {
+  position: relative;
+  background: var(--deep-green);
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow:
+    0 0 0 4px rgba(200,168,48,0.12),
+    4px 6px 0 rgba(10,20,5,0.4),
+    8px 10px 0 rgba(10,20,5,0.15),
+    0 12px 32px rgba(10,20,5,0.35);
+  overflow: hidden;
+  aspect-ratio: 3 / 4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 朱の角印 */
+.image-frame::before {
+  content: '';
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 24px;
+  height: 24px;
+  border: 2px solid var(--accent);
+  border-radius: 2px;
+  opacity: 0.75;
+  z-index: 2;
+}
+
+/* 金の内縁 */
+.image-frame::after {
+  content: '';
+  position: absolute;
+  inset: 6px;
+  border: 1px solid rgba(200,168,48,0.2);
+  border-radius: 2px;
+  z-index: 2;
+  pointer-events: none;
+}
+
+#cardImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  filter: sepia(0.15) contrast(1.05);
+}
+
+.no-image {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  background: repeating-linear-gradient(
+    45deg,
+    var(--deep-green),
+    var(--deep-green) 8px,
+    rgba(200,168,48,0.08) 8px,
+    rgba(200,168,48,0.08) 9px
+  );
+}
+.no-image span {
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  color: rgba(232,200,74,0.3);
+  writing-mode: vertical-rl;
+  letter-spacing: 0.25em;
+}
+
+/* --- 情報エリア（和紙カード） --- */
+.card-info {
+  padding-top: 0.5rem;
+}
+
+/* 和紙の台紙 */
+.card-info-inner,
+.card-header,
+.card-body {
+  position: relative;
+}
+
+.card-header {
+  margin-bottom: 1.5rem;
+}
+
+.card-name {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--ink);
+  letter-spacing: 0.06em;
+  /* 朱の下線 → 金+朱の二重線 */
+  border-bottom: 3px solid var(--accent);
+  box-shadow: 0 3px 0 0 var(--accent-gold);
+  display: inline-block;
+  padding-bottom: 0.35rem;
+  margin-bottom: 1rem;
+}
+
+.card-meta {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.meta-item {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+}
+
+.meta-label {
+  font-size: 0.7rem;
+  color: var(--deep-green);
+  letter-spacing: 0.15em;
+  font-weight: 500;
+  border: 1px solid var(--deep-green);
+  padding: 1px 6px;
+  border-radius: 2px;
+  background: rgba(30,61,26,0.07);
+}
+
+.meta-value {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  color: var(--ink);
+}
+
+/* --- 区切り線（金の飾り線） --- */
+.divider {
+  height: 1px;
+  background: linear-gradient(
+    to right,
+    var(--accent) 20px,
+    var(--accent-gold) 20px,
+    var(--accent-gold) 60px,
+    var(--border-soft) 60px
+  );
+  margin: 1.5rem 0;
+}
+
+/* --- フィールド群 --- */
+.card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.field {
+  display: grid;
+  grid-template-columns: 3.5rem 1fr;
+  gap: 0.75rem;
+  align-items: start;
+}
+
+.field-label {
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: var(--deep-green);
+  letter-spacing: 0.15em;
+  padding-top: 0.15em;
+  white-space: nowrap;
+}
+
+.field-value {
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  line-height: 1.8;
+  color: var(--ink);
+}
+
+.field-value--remarks {
+  font-size: 0.85rem;
+  color: var(--ink-light);
+  background: rgba(74,103,65,0.07);
+  border-left: 3px solid var(--accent-gold);
+  padding: 0.5rem 0.75rem;
+  border-radius: 0 var(--radius) var(--radius) 0;
+}
+
+/* --- 前後ナビ --- */
+.page-nav {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 3.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border-soft);
+  gap: 1rem;
+}
+
+.page-nav-btn {
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  color: var(--deep-green);
+  text-decoration: none;
+  padding: 0.5rem 1.25rem;
+  border: 1px solid var(--deep-green);
+  border-radius: var(--radius);
+  background: var(--surface);
+  transition: all var(--transition);
+  letter-spacing: 0.05em;
+}
+.page-nav-btn:hover {
+  background: var(--deep-green);
+  color: var(--accent-sub);
+  border-color: var(--border);
+  box-shadow: 0 2px 8px rgba(10,20,5,0.2);
+}
+.page-nav-btn.disabled {
+  opacity: 0.3;
+  pointer-events: none;
+}
+
+/* --- レスポンシブ --- */
+@media (max-width: 680px) {
+  .card-detail {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+  .image-frame {
+    max-width: 280px;
+    margin: 0 auto;
+  }
+  .nav { padding: 0.75rem 1rem; }
+  .card-page { padding: 1.5rem 1rem 3rem; }
+  .card-name { font-size: 1.5rem; }
+}
+
+/* --- アクセシビリティ --- */
+@media (prefers-reduced-motion: reduce) {
+  .loading-text { animation: none; }
+  * { transition: none !important; }
+}

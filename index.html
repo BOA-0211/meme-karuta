@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>カルタ一覧</title>
+  <link rel="stylesheet" href="index.css">
+</head>
+<body>
+
+<!-- SVGフィルター定義（インクのにじみ・かすれ） -->
+<svg class="ink-filters" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- タイトル用：強めのにじみ -->
+    <filter id="ink" x="-5%" y="-10%" width="110%" height="130%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.04 0.06" numOctaves="4" seed="3" result="noise"/>
+      <feDisplacementMap in="SourceGraphic" in2="noise" scale="2.5" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+    <!-- カード用：軽いにじみ -->
+    <filter id="ink-card" x="-2%" y="-2%" width="104%" height="104%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.065" numOctaves="3" seed="7" result="noise"/>
+      <feDisplacementMap in="SourceGraphic" in2="noise" scale="1.2" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+  </defs>
+</svg>
+
+<div class="page-wrapper">
+
+  <div class="page-title-wrap">
+    <div class="page-title">カルタ一覧</div>
+  </div>
+
+  <div class="card-grid" id="cardGrid"></div>
+
+</div>
+
+<script src="index.js"></script>
+
+</body>
+</html>

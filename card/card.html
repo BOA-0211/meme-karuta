@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>カード詳細</title>
+  <link rel="stylesheet" href="./card.css" />
+</head>
+<body>
+  <div id="app">
+    <div id="loading" class="loading">
+      <span class="loading-text">読み込み中…</span>
+    </div>
+    <div id="error" class="error hidden">
+      <p id="errorMessage"></p>
+      <a href="../index.html" class="back-link">← 一覧に戻る</a>
+    </div>
+    <main id="cardPage" class="card-page hidden">
+      <nav class="nav">
+        <a href="../index.html" class="back-link">← 一覧に戻る</a>
+        <span id="cardId" class="card-id"></span>
+      </nav>
+
+      <article class="card-detail">
+        <!-- 左：カード画像 -->
+        <section class="card-visual">
+          <div class="image-frame" id="imageFrame">
+            <img id="cardImage" src="" alt="" />
+            <div id="noImage" class="no-image hidden">
+              <span id="noImageLabel"></span>
+            </div>
+          </div>
+        </section>
+
+        <!-- 右：カード情報 -->
+        <section class="card-info">
+          <header class="card-header">
+            <h1 id="cardName" class="card-name"></h1>
+            <div class="card-meta">
+              <span class="meta-item">
+                <span class="meta-label">震源地</span>
+                <span id="cardOrigin" class="meta-value"></span>
+              </span>
+              <span class="meta-item">
+                <span class="meta-label">年</span>
+                <span id="cardYear" class="meta-value"></span>
+              </span>
+            </div>
+          </header>
+
+          <div class="divider"></div>
+
+          <dl class="card-body">
+            <div class="field">
+              <dt class="field-label">説明</dt>
+              <dd id="cardDescription" class="field-value"></dd>
+            </div>
+            <div class="field">
+              <dt class="field-label">用途</dt>
+              <dd id="cardHowto" class="field-value"></dd>
+            </div>
+            <div class="field field--remarks" id="remarksField">
+              <dt class="field-label">備考</dt>
+              <dd id="cardRemarks" class="field-value field-value--remarks"></dd>
+            </div>
+          </dl>
+        </section>
+      </article>
+
+      <!-- 前後ナビゲーション -->
+      <nav class="page-nav">
+        <a id="prevLink" href="#" class="page-nav-btn" id="prevBtn">← 前のカード</a>
+        <a id="nextLink" href="#" class="page-nav-btn">次のカード →</a>
+      </nav>
+    </main>
+  </div>
+
+  <script src="../data/cards.js"></script>
+  <script src="./card.js"></script>
+</body>
+</html>
