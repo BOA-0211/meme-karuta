@@ -32,6 +32,7 @@ const GALLERY_PATH = "../gallery/";
   const card = CARDS_DATA[index];
   await renderCard(card, id);
   renderPageNav(CARDS_DATA, index);
+  setupFlip();
   showPage();
 })();
 
@@ -74,7 +75,7 @@ async function renderCard(card, id) {
     remarksField.classList.add("hidden");
   }
 
-  // 画像
+  // --- 表面：絵画像 ---
   const imageSrc = GALLERY_PATH + (card.image || `${id}.png`);
   const exists   = await checkImage(imageSrc);
   const imgEl    = document.getElementById("cardImage");
@@ -89,6 +90,45 @@ async function renderCard(card, id) {
     imgEl.classList.add("hidden");
     noImgLabel.textContent = `${card.name || id}　画像なし`;
     noImgEl.classList.remove("hidden");
+  }
+
+  // --- 裏面：文字画像（card-〇〇_文字.png）---
+  const backSrc = GALLERY_PATH + (card.imageBack || `${id}_文字.png`);
+  const backExists = await checkImage(backSrc);
+  const backImgEl  = document.getElementById("cardBackImage");
+  const backPlaceholder = document.getElementById("cardBackPlaceholder");
+
+  if (backExists) {
+    backImgEl.src = backSrc;
+    backImgEl.alt = `${card.name || id}（文字）`;
+    backImgEl.classList.remove("hidden");
+    backPlaceholder.classList.add("hidden");
+  } else {
+    backImgEl.classList.add("hidden");
+    backPlaceholder.classList.remove("hidden");
+  }
+}
+
+// -----------------------------------------------
+//  フリップボタンの設定
+// -----------------------------------------------
+function setupFlip() {
+  const wrapper     = document.getElementById("imageFrame");
+  const flipBtn     = document.getElementById("flipBtn");
+  const flipBtnBack = document.getElementById("flipBtnBack");
+
+  if (!wrapper || !flipBtn) return;
+
+  flipBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    wrapper.classList.add("flipped");
+  });
+
+  if (flipBtnBack) {
+    flipBtnBack.addEventListener("click", (e) => {
+      e.stopPropagation();
+      wrapper.classList.remove("flipped");
+    });
   }
 }
 

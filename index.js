@@ -62,12 +62,54 @@ const CARDS = [
   { id: "card-050", name: "カード050", image: "card-050.png" },
 ];
 
-const GALLERY_PATH = "./gallery/";
-const grid = document.getElementById("cardGrid");
+/* ====================================================
+ *  予備カード検出の設定
+ *
+ *  ── ① 連番プローブ（自動） ──
+ *  PROBE_START 番から順に画像の実在を確認します。
+ *  PROBE_MISS_LIMIT 枚連続で見つからなかったら打ち切り。
+ *  ※ 番号が飛んでいる場合は PROBE_MISS_LIMIT を増やすか②を使ってください。
+ *
+ *  ── ② 手動リスト（EXTRA_CARDS） ──
+ *  番号体系が異なる・飛び番があるカードはここに直接追記してください。
+ * ==================================================== */
+const PROBE_START      = 51;
+const PROBE_LIMIT      = 200;
+const PROBE_MISS_LIMIT = 5;
 
-CARDS.forEach(card => {
+const EXTRA_CARDS = [
+  // 例: { id: "special-001", name: "特別カード001", image: "special-001.png" },
+];
+
+/* ================================================
+ *  共通ユーティリティ
+ * ================================================ */
+
+const GALLERY_PATH = "./gallery/";
+
+/**
+ * 画像URLの実在確認
+ * @param {string} src
+ * @returns {Promise<boolean>}
+ */
+function checkImage(src) {
+  return new Promise(resolve => {
+    const img = new Image();
+    img.onload  = () => resolve(true);
+    img.onerror = () => resolve(false);
+    img.src = src;
+  });
+}
+
+/**
+ * カード要素を生成してグリッドに追加する
+ * @param {{ id: string, name: string, image: string }} card
+ * @param {HTMLElement} grid  追加先のグリッド要素
+ * @param {string[]} [extraClasses]  <a> に追加するクラス名
+ */
+function appendCardElement(card, grid, extraClasses = []) {
   const a = document.createElement("a");
-  a.className = "card";
+  a.className = ["card", ...extraClasses].join(" ");
   a.href = `./card/card.html?id=${card.id}`;
 
   const imageWrap = document.createElement("div");
@@ -90,27 +132,87 @@ CARDS.forEach(card => {
 
   const info = document.createElement("div");
   info.className = "card-info";
-
   const nameEl = document.createElement("p");
   nameEl.className = "card-name";
   nameEl.textContent = card.name;
-
   info.appendChild(nameEl);
+
   a.appendChild(imageWrap);
   a.appendChild(info);
   grid.appendChild(a);
-});
+}
+
+/* ================================================
+ *  メインカード一覧（card-001〜card-050）
+ * ================================================ */
+
+const mainGrid = document.getElementById("cardGrid");
+CARDS.forEach(card => appendCardElement(card, mainGrid));
+
+/* ================================================
+ *  予備カード検出・表示
+ * ================================================ */
+
+/** 一覧登録済みのカードID集合 */
+const LISTED_IDS = new Set(CARDS.map(c => c.id));
 
 /**
- * 画像URLの存在確認
- * @param {string} src
- * @returns {Promise<boolean>}
+ * 連番プローブ＋手動リストで予備カードを検出する
+ * @returns {Promise<Array<{id:string, name:string, image:string}>>}
  */
-function checkImage(src) {
-  return new Promise(resolve => {
-    const img = new Image();
-    img.onload  = () => resolve(true);
-    img.onerror = () => resolve(false);
-    img.src = src;
-  });
+async function detectExtraCards() {
+  const found = [];
+
+  /* ① 連番プローブ */
+  let misses = 0;
+  for (let n = PROBE_START; n <= PROBE_LIMIT; n++) {
+    const id    = `card-${String(n).padStart(3, "0")}`;
+    const image = `${id}.png`;
+    if (LISTED_IDS.has(id)) continue;
+
+    const exists = await checkImage(GALLERY_PATH + image);
+    if (exists) {
+      found.push({ id, name: id, image });
+      misses = 0;
+    } else {
+      misses++;
+      if (misses >= PROBE_MISS_LIMIT) break;
+    }
+  }
+
+  /* ② 手動リスト（実在確認付き） */
+  for (const card of EXTRA_CARDS) {
+    if (LISTED_IDS.has(card.id)) continue;
+    if (found.some(f => f.id === card.id)) continue;
+    const exists = await checkImage(GALLERY_PATH + card.image);
+    if (exists) found.push(card);
+  }
+
+  return found;
 }
+
+/**
+ * 予備カードセクションをページ末尾に追加する
+ */
+async function buildExtraSection() {
+  const extraCards = await detectExtraCards();
+  if (extraCards.length === 0) return;
+
+  const section = document.createElement("div");
+  section.className = "extra-section";
+  section.innerHTML = `
+    <div class="extra-section-heading">
+      <span class="extra-section-rule"></span>
+      <span class="extra-section-title">予備カード</span>
+      <span class="extra-section-rule"></span>
+    </div>
+    <div class="card-grid"></div>
+  `;
+
+  const extraGrid = section.querySelector(".card-grid");
+  extraCards.forEach(card => appendCardElement(card, extraGrid, ["extra-card"]));
+
+  document.querySelector(".page-wrapper").appendChild(section);
+}
+
+buildExtraSection();

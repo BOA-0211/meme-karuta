@@ -145,9 +145,31 @@ body {
 }
 
 /* --- 画像エリア（百人一首・読み札風） --- */
-.image-frame {
+
+/* カード裏返しコンテナ */
+.card-flip-wrapper {
+  perspective: 1000px;
+  aspect-ratio: 3 / 4;
+}
+
+.card-flip-inner {
   position: relative;
-  background: var(--deep-green);
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 0.65s cubic-bezier(0.45, 0.05, 0.55, 0.95);
+}
+
+.card-flip-wrapper.flipped .card-flip-inner {
+  transform: rotateY(180deg);
+}
+
+/* 表・裏 共通 */
+.card-face {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
   border: 2px solid var(--border);
   border-radius: var(--radius);
   box-shadow:
@@ -156,28 +178,20 @@ body {
     8px 10px 0 rgba(10,20,5,0.15),
     0 12px 32px rgba(10,20,5,0.35);
   overflow: hidden;
-  aspect-ratio: 3 / 4;
+  background: var(--deep-green);
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-/* 朱の角印 */
-.image-frame::before {
-  content: '';
-  position: absolute;
-  top: 12px;
-  right: 12px;
-  width: 24px;
-  height: 24px;
-  border: 2px solid var(--accent);
-  border-radius: 2px;
-  opacity: 0.75;
-  z-index: 2;
+/* 裏面は反転済み */
+.card-face--back {
+  transform: rotateY(180deg);
+  background: var(--surface);
 }
 
-/* 金の内縁 */
-.image-frame::after {
+/* 金の内縁（表・裏共通） */
+.card-face::after {
   content: '';
   position: absolute;
   inset: 6px;
@@ -185,6 +199,88 @@ body {
   border-radius: 2px;
   z-index: 2;
   pointer-events: none;
+}
+
+/* 互換エイリアス（既存コードが .image-frame を参照） */
+.image-frame {
+  position: relative;
+  aspect-ratio: 3 / 4;
+}
+
+/* --- 朱の角印ボタン（クリック可能） --- */
+.flip-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 28px;
+  height: 28px;
+  border: 2px solid var(--accent);
+  border-radius: 2px;
+  background: transparent;
+  cursor: pointer;
+  z-index: 10;
+  opacity: 0.75;
+  transition:
+    opacity var(--transition),
+    background var(--transition),
+    transform 0.1s ease;
+  /* アクセシビリティ */
+  padding: 0;
+  /* インジケータ：小さな三角で「めくれる」を暗示 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.flip-btn::before {
+  content: '';
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 0px solid transparent;
+  border-top: 9px solid var(--accent);
+  opacity: 0.8;
+  transition: border-top-color var(--transition);
+}
+.flip-btn:hover {
+  opacity: 1;
+  background: rgba(192,57,43,0.18);
+}
+.flip-btn:hover::before {
+  border-top-color: #e05043;
+}
+.flip-btn:active {
+  transform: scale(0.9);
+}
+
+/* 裏面の文字画像 */
+.card-back-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  padding: 1rem;
+}
+
+.card-back-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  background: repeating-linear-gradient(
+    45deg,
+    var(--surface),
+    var(--surface) 8px,
+    rgba(200,168,48,0.12) 8px,
+    rgba(200,168,48,0.12) 9px
+  );
+}
+.card-back-placeholder span {
+  font-family: var(--font-display);
+  font-size: 0.8rem;
+  color: var(--ink-light);
+  writing-mode: vertical-rl;
+  letter-spacing: 0.25em;
 }
 
 #cardImage {
@@ -368,7 +464,7 @@ body {
     grid-template-columns: 1fr;
     gap: 2rem;
   }
-  .image-frame {
+  .card-flip-wrapper {
     max-width: 280px;
     margin: 0 auto;
   }

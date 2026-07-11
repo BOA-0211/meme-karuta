@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>カード詳細</title>
-  <link rel="stylesheet" href="./card.css" />
+  <link rel="stylesheet" href="card.css" />
 </head>
 <body>
   <div id="app">
@@ -24,10 +24,24 @@
       <article class="card-detail">
         <!-- 左：カード画像 -->
         <section class="card-visual">
-          <div class="image-frame" id="imageFrame">
-            <img id="cardImage" src="" alt="" />
-            <div id="noImage" class="no-image hidden">
-              <span id="noImageLabel"></span>
+          <div class="card-flip-wrapper" id="imageFrame">
+            <div class="card-flip-inner">
+              <!-- 表面 -->
+              <div class="card-face card-face--front">
+                <button class="flip-btn" id="flipBtn" aria-label="カードを裏返す" title="裏返す"></button>
+                <img id="cardImage" src="" alt="" />
+                <div id="noImage" class="no-image hidden">
+                  <span id="noImageLabel"></span>
+                </div>
+              </div>
+              <!-- 裏面 -->
+              <div class="card-face card-face--back">
+                <button class="flip-btn" id="flipBtnBack" aria-label="カードを表に戻す" title="表に戻す" style="border-color: var(--deep-green);" ></button>
+                <img id="cardBackImage" src="" alt="" class="card-back-image hidden" />
+                <div id="cardBackPlaceholder" class="card-back-placeholder hidden">
+                  <span>文字画像なし</span>
+                </div>
+              </div>
             </div>
           </div>
         </section>
@@ -76,6 +90,6 @@
   </div>
 
   <script src="../data/cards.js"></script>
-  <script src="./card.js"></script>
+  <script src="card.js"></script>
 </body>
 </html>
